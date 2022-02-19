@@ -1,9 +1,5 @@
+import { createApp } from 'vue'
+import App from './App.vue'
 
-import * as Vue from 'vue'
-import App from './App'
-
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  render: h => h(App)
-})
+const app = createApp(App)
+app.mount('#app')
