@@ -4,7 +4,7 @@ const webpack = require('webpack')
 const ejs = require('ejs')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
-const ExtensionReloader = require('webpack-extension-reloader')
+const ExtReloader = require('webpack-ext-reloader')
 const { VueLoaderPlugin } = require('vue-loader')
 const { version } = require('./package.json')
 
@@ -65,25 +65,27 @@ const config = {
     new MiniCssExtractPlugin({
       filename: '[name].css'
     }),
-    new CopyPlugin([
-      { from: 'icons', to: 'icons', ignore: ['icon.xcf'] },
-      { from: '../LICENSE', to: '' },
-      { from: 'options/options.html', to: 'options/options.html', transform: transformHtml },
-      {
-        from: 'manifest.json',
-        to: 'manifest.json',
-        transform: (content) => {
-          const jsonContent = JSON.parse(content)
-          jsonContent.version = version
+    new CopyPlugin({
+      patterns: [
+        { from: 'icons', to: 'icons', globOptions: { ignore: ['icon.xcf'] } },
+        { from: '../LICENSE', to: '' },
+        { from: 'options/options.html', to: 'options/options.html', transform: transformHtml },
+        {
+          from: 'manifest.json',
+          to: 'manifest.json',
+          transform: (content) => {
+            const jsonContent = JSON.parse(content)
+            jsonContent.version = version
 
-          if (config.mode === 'development') {
-            jsonContent.content_security_policy = "script-src 'self' 'unsafe-eval'; object-src 'self'"
+            if (config.mode === 'development') {
+              jsonContent.content_security_policy = "script-src 'self' 'unsafe-eval'; object-src 'self'"
+            }
+
+            return JSON.stringify(jsonContent, null, 2)
           }
-
-          return JSON.stringify(jsonContent, null, 2)
         }
-      }
-    ])
+      ]
+    })
   ]
 }
 
@@ -99,7 +101,7 @@ if (config.mode === 'production') {
 
 if (process.env.HMR === 'true') {
   config.plugins = (config.plugins || []).concat([
-    new ExtensionReloader({
+    new ExtReloader({
       manifest: __dirname + '/src/manifest.json'
     })
   ])
