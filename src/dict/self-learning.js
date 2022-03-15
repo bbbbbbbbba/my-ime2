@@ -6,11 +6,13 @@ var SelfLearning = {
     }
     if (!this.dict[pinyin].includes(word)) {
       this.dict[pinyin].push(word)
+      this.saveDict()
     }
   },
   unlearn: function (word, pinyin) {
     if (pinyin in this.dict) {
       this.dict[pinyin] = this.dict[pinyin].filter(item => item !== word)
+      this.saveDict()
     }
   },
   loadDict: function () {

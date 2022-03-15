@@ -1,6 +1,4 @@
-var MyIME = require('./ime/my-ime.js')
-
-var ime = null
+var ime = require('./ime/my-ime.js')
 
 chrome.input.ime.onFocus.addListener(function (context) {
   console.log('onFocus:' + context.contextID)
@@ -18,8 +16,7 @@ chrome.input.ime.onReset.addListener(function (engineID) {
 
 chrome.input.ime.onActivate.addListener(function (engineID) {
   console.log('onActivate:' + engineID)
-  ime = MyIME
-  MyIME.Init(engineID)
+  ime.Init(engineID)
   console.log('IME:')
   console.log(ime)
 })
@@ -27,7 +24,6 @@ chrome.input.ime.onActivate.addListener(function (engineID) {
 chrome.input.ime.onDeactivated.addListener(function (engineID) {
   console.log('onDeactivated:' + engineID)
   ime.onDeactivated()
-  ime = null
 })
 
 chrome.input.ime.onKeyEvent.addListener(function (engineID, keyData) {
