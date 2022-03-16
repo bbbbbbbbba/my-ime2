@@ -2,16 +2,18 @@
   "name": "my-ime",
   "description": "A Shuangpin IME for Chrome OS.",
   "version": "2.0.0",
-  "manifest_version": 3,
+  "manifest_version": 2,
   "icons": {
     "48": "icons/icon_48.png",
     "128": "icons/icon_128.png"
   },
-  "action": {
+  "browser_action": {
     "default_title": "my-ime"
   },
   "background": {
-    "service_worker": "background.js"
+    "scripts": [
+      "background.js"
+    ]
   },
   "permissions": [
     "input",
@@ -28,6 +30,7 @@
     }
   ],
   "options_ui": {
-    "page": "options/options.html"
+    "page": "options/options.html",
+    "chrome_style": true
   }
 }
