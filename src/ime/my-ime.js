@@ -7,6 +7,28 @@ var Parser = require('../parser/parser.js')
 var Match = require('../dict/match.js')
 var SelfLearning = require('../dict/self-learning.js')
 
+var punctuations = {
+  ',': ['\uff0c'],
+  '.': ['\u3002'],
+  '<': ['\u300a'],
+  '>': ['\u300b'],
+  '?': ['\uff1f'],
+  '!': ['\uff01'],
+  ';': ['\uff1b'],
+  ':': ['\uff1a'],
+  '[': ['\u3010'],
+  ']': ['\u3011'],
+  '\\': ['\u3001'],
+  '^': ['\u2026\u2026'],
+  '(': ['\uff08'],
+  ')': ['\uff09'],
+  '_': ['\u2014\u2014'],
+  '$': ['\uffe5'],
+  '`': ['\u00b7'],
+  "'": ['\u2018', '\u2019'],
+  '"': ['\u201c', '\u201d']
+}
+
 var MyIME = {
   itemPerPage: 5,
   engineID: null,
@@ -18,8 +40,7 @@ var MyIME = {
   parser: Parser,
   transer: [Match],
   stage: 0, // stage 0: outer ime; stage 1: inner ime, inputting; stage 2: inner ime, selecting characters
-  innerQuote: false,
-  innerDoubleQuote: false,
+  punctuationIndex: {}, // for quotation marks
 
   Init: function (engineID) {
     this.engineID = engineID
@@ -204,79 +225,11 @@ var MyIME = {
           this.inputChar(keyData.key)
           return true
         }
-        if (keyData.key.match(/^[,.<>;:'"[\]\\!?^$()_`]$/)) {
-          // chinese punctuations includes , . < > ? ! ; : ' " [ ] \ ^ ( ) _ $ `
-          switch (keyData.key) {
-            case ',':
-              this.commitText('\uff0c')
-              break
-            case '.':
-              this.commitText('\u3002')
-              break
-            case '<':
-              this.commitText('\u300a')
-              break
-            case '>':
-              this.commitText('\u300b')
-              break
-            case '?':
-              this.commitText('\uff1f')
-              break
-            case '!':
-              this.commitText('\uff01')
-              break
-            case ';':
-              this.commitText('\uff1b')
-              break
-            case ':':
-              this.commitText('\uff1a')
-              break
-            case "'":
-              if (this.innerQuote) {
-                this.commitText('\u2019')
-                this.innerQuote = false
-              } else {
-                this.commitText('\u2018')
-                this.innerQuote = true
-              }
-              break
-            case '"':
-              if (this.innerDoubleQuote) {
-                this.commitText('\u201d')
-                this.innerDoubleQuote = false
-              } else {
-                this.commitText('\u201c')
-                this.innerDoubleQuote = true
-              }
-              break
-            case '[':
-              this.commitText('\u3010')
-              break
-            case ']':
-              this.commitText('\u3011')
-              break
-            case '\\':
-              this.commitText('\u3001')
-              break
-            case '^':
-              this.commitText('\u2026\u2026')
-              break
-            case '(':
-              this.commitText('\uff08')
-              break
-            case ')':
-              this.commitText('\uff09')
-              break
-            case '_':
-              this.commitText('\u2014\u2014')
-              break
-            case '$':
-              this.commitText('\uffe5')
-              break
-            case '`':
-              this.commitText('\u00b7')
-              break
-          }
+        if (Object.keys(punctuations).includes(keyData.key)) {
+          var l = punctuations[keyData.key]
+          var i = this.punctuationIndex[keyData.key] || 0
+          this.commitText(l[i])
+          this.punctuationIndex[keyData.key] = (i + 1) % l.length
           return true
         }
         return false
