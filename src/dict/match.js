@@ -4,9 +4,8 @@ const LearnedDict = require('./self-learning.js').dict
 const Dicts = [LearnedDict, BasicDict]
 
 var Match = {
-  result: [],
   trans: function (text) {
-    this.result = []
+    var result = []
     var appeared = new Set()
     for (var i in Dicts) {
       var index = text.length
@@ -17,14 +16,14 @@ var Match = {
             var word = Dicts[i][partialText][j]
             if (!appeared.has(word)) {
               appeared.add(word)
-              this.result.push({ char: word, pinyin: partialText.replaceAll(' ', ''), spacedPinyin: partialText })
+              result.push({ char: word, pinyin: partialText.replaceAll(' ', ''), spacedPinyin: partialText })
             }
           }
         }
         index = text.slice(0, index).lastIndexOf(' ')
       }
     }
-    return this.result
+    return result
   }
 }
 
