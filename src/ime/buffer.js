@@ -22,14 +22,14 @@ var Buffer = {
     return beforeCursor.text.length
   },
   addChar: function (char) {
-    // this function won't refresh the parsed object
     this.raw = this.raw.slice(0, this.cursor) + char + this.raw.slice(this.cursor)
     this.cursor++
+    this.parse()
   },
   removeChar: function () {
-    // this function won't refresh the parsed object
     this.raw = this.raw.slice(0, this.cursor - 1) + this.raw.slice(this.cursor)
     this.cursor--
+    this.parse()
   },
   clear: function () {
     this.raw = ''

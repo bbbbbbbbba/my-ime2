@@ -85,14 +85,12 @@ var MyIME = {
   },
   inputChar: function (char) {
     this.buffer.addChar(char)
-    this.buffer.parse()
     var spacedStr = this.buffer.parsed.spacedText
     this.composition.set(spacedStr, this.buffer.calcCursor())
     this.candidate.set(this.buffer.parsed.spacedText)
   },
   removeChar: function () {
     this.buffer.removeChar()
-    this.buffer.parse()
     var spacedStr = this.buffer.parsed.spacedText
     if (spacedStr === '') {
       this.clearInput()
