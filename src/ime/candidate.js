@@ -3,7 +3,7 @@ var Candidate = {
   contextID: null,
   rawText: '',
   candidates: [],
-  transBack: null,
+  transBack: [],
   page: 0,
   cursor: 0,
   itemPerPage: null,
@@ -49,9 +49,24 @@ var Candidate = {
     this.cursor = 0
     this.rawText = ''
     this.candidates = []
-    this.transBack = null
+    this.transBack = []
     this.page = 0
     this.hide()
+  },
+  update: function () {
+    this.candidates = []
+    for (var j = 0; j < this.itemPerPage && j < this.transBack.length - this.page * this.itemPerPage; j++) {
+      this.candidates[j] = {
+        candidate: this.transBack[this.page * this.itemPerPage + j].char,
+        id: j,
+        label: (j + 1).toString()
+      }
+    }
+    chrome.input.ime.setCandidates({
+      contextID: this.contextID,
+      candidates: this.candidates
+    })
+    this.cursorSet(0)
   },
   set: function (text) {
     this.rawText = text
@@ -60,19 +75,8 @@ var Candidate = {
       transerResult = this.transer[i].trans(this.rawText)
       if (transerResult) {
         this.transBack = transerResult
-        for (var j = 0; j < this.itemPerPage && j < this.transBack.length; j++) {
-          this.candidates[j] = {
-            candidate: this.transBack[j].char,
-            id: j,
-            label: (j + 1).toString()
-          }
-        }
         this.page = 0
-        chrome.input.ime.setCandidates({
-          contextID: this.contextID,
-          candidates: this.candidates
-        })
-        this.cursorSet(0)
+        this.update()
         this.show()
         return true
       }
@@ -82,29 +86,8 @@ var Candidate = {
   pageUp: function () {
     if (this.page !== 0) {
       this.page--
-
-      if (this.transBack) {
-        for (var j = 0; j < this.itemPerPage; j++) {
-          if (j < this.transBack.length - this.page * this.itemPerPage) {
-            this.candidates[j] = {
-              candidate: this.transBack[this.page * this.itemPerPage + j].char,
-              id: j,
-              label: (j + 1).toString()
-            }
-          } else {
-            this.candidates = this.candidates.slice(0, j)
-            break
-          }
-        }
-        chrome.input.ime.setCandidates({
-          contextID: this.contextID,
-          candidates: this.candidates
-        })
-        this.cursorSet(0)
-        return true
-      } else {
-        return false
-      }
+      this.update()
+      return true
     } else {
       return false
     }
@@ -112,29 +95,8 @@ var Candidate = {
   pageDown: function () {
     if ((this.page + 1) * this.itemPerPage < this.transBack.length) {
       this.page++
-
-      if (this.transBack) {
-        for (var j = 0; j < this.itemPerPage; j++) {
-          if (j < this.transBack.length - this.page * this.itemPerPage) {
-            this.candidates[j] = {
-              candidate: this.transBack[this.page * this.itemPerPage + j].char,
-              id: j,
-              label: (j + 1).toString()
-            }
-          } else {
-            this.candidates = this.candidates.slice(0, j)
-            break
-          }
-        }
-        chrome.input.ime.setCandidates({
-          contextID: this.contextID,
-          candidates: this.candidates
-        })
-        this.cursorSet(0)
-        return true
-      } else {
-        return false
-      }
+      this.update()
+      return true
     } else {
       return false
     }
