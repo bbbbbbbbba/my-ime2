@@ -93,13 +93,7 @@ var MyIME = {
   removeChar: function () {
     this.buffer.removeChar()
     this.buffer.parse()
-    var spacedStr = this.buffer.parsed.text
-    for (var i = this.buffer.parsed.space.length - 1; i >= 0; i--) {
-      spacedStr =
-        spacedStr.slice(0, this.buffer.parsed.space[i]) +
-        ' ' +
-        spacedStr.slice(this.buffer.parsed.space[i])
-    }
+    var spacedStr = this.buffer.parsed.spacedText
     if (spacedStr === '') {
       this.clearInput()
     } else {
@@ -133,13 +127,7 @@ var MyIME = {
         return true
       }
       // update composition text
-      var spacedStr = this.buffer.parsed.text
-      for (var i = this.buffer.parsed.space.length - 1; i >= 0; i--) {
-        spacedStr =
-          spacedStr.slice(0, this.buffer.parsed.space[i]) +
-          ' ' +
-          spacedStr.slice(this.buffer.parsed.space[i])
-      }
+      var spacedStr = this.buffer.parsed.spacedText
       var selectedLetter = this.buffer.calcSelectedLetter()
       spacedStr =
         this.buffer.mergeAllSelected() +
@@ -177,13 +165,7 @@ var MyIME = {
       this.stage = 1
     }
     // update composition text
-    var spacedStr = this.buffer.parsed.text
-    for (var i = this.buffer.parsed.space.length - 1; i >= 0; i--) {
-      spacedStr =
-        spacedStr.slice(0, this.buffer.parsed.space[i]) +
-        ' ' +
-        spacedStr.slice(this.buffer.parsed.space[i])
-    }
+    var spacedStr = this.buffer.parsed.spacedText
     var selectedLetter = this.buffer.calcSelectedLetter()
     spacedStr =
       this.buffer.mergeAllSelected() +
