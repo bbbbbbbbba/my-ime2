@@ -15,6 +15,22 @@ var SelfLearning = {
       this.saveDict()
     }
   },
+  merge: function (other_dict) {
+    var res = 0
+    Object.keys(other_dict).forEach(pinyin => {
+      if (!(pinyin in this.dict)) {
+        this.dict[pinyin] = []
+      }
+      other_dict[pinyin].forEach(word => {
+        if (!this.dict[pinyin].includes(word)) {
+          this.dict[pinyin].push(word)
+          res++
+        }
+      })
+    })
+    this.saveDict()
+    return res
+  },
   loadDict: function () {
     console.log('Loading learned dictionary.')
     chrome.storage.local.get('learnedDict', (result) => {

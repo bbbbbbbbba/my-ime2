@@ -1,4 +1,5 @@
 var ime = require('./ime/my-ime.js')
+var SelfLearning = require('./dict/self-learning.js')
 
 chrome.input.ime.onFocus.addListener(function (context) {
   console.log('onFocus:' + context.contextID)
@@ -28,4 +29,10 @@ chrome.input.ime.onDeactivated.addListener(function (engineID) {
 
 chrome.input.ime.onKeyEvent.addListener(function (engineID, keyData) {
   return ime.handleKeyEvent(keyData)
+})
+
+chrome.runtime.onMessage.addListener(function (message) {
+  if (message.reloadDict) {
+    SelfLearning.loadDict()
+  }
 })
