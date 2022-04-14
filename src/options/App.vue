@@ -56,6 +56,9 @@ function importDict() {
     chrome.runtime.sendMessage({reloadDict: true})
     importMessage.value = `导入成功，新增字词${new_count}个`
     loadingFile.value = false
+  }).catch(err => {
+    importMessage.value = `导入错误：${err}`
+    loadingFile.value = false
   })
 }
 
